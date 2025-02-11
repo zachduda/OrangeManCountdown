@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="dark" lang="en" data-afd-extension-id="meojnmfhjkahlfcecpdcdgjclcilmaij"><head>
+	<link rel="preconnect" href="https://empanadas.io">
+	<link rel="dns-prefetch" href="https://paste.zachduda.com">
+	<link rel="preconnect" href="https://ci.zachduda.com">
+	<link rel="dns-prefetch" href="https://mountaineermetrics.com">
+	<link rel="dns-prefetch" href="https://www.spigotmc.org/resources/chatfeelings.12987/">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta property="og:locale" content="en_US">
+	<meta name="og:country-name" content="USA">
+	<meta name="reply-to" content="starry-lasso-omit@duck.com">
+	<meta name="author" content="Zach Duda, starry-lasso-omit@duck.com">
+	<meta name="og:email" content="Zach Duda, starry-lasso-omit@duck.com">
+	<meta name="robots" content="index,follow">
+	<meta name="theme-color" content="#0f172a">
+	<link rel="apple-touch-startup-image" href="https://zachduda.com/Content/Images/logo.png">
+	<meta name="keywords" content="Zach Duda, Zach, Duda, Tech Blog, Student, Student Blog, Technology, Computers, PHP, Web Development">
+	<meta name="og:title" content="Zach Duda">
+	<meta name="og:site_name" content="Zach Duda">
+	<meta name="og:type" content="website">
+	<meta name="og:image" content="https://zachduda.com/Content/Images/logo.png">
+	<meta name="og:description" content="A software developer from Appalachian State University.">
+	<meta name="description" content="A software developer from Appalachian State University">
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+	<link rel="manifest" href="/site.webmanifest">
+	<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5ND1GPZRH7" type="text/javascript"></script>
+	<script async="" src="/Content/JS/core.js?v=11524-1109" defer="" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orange Man Countdown</title>
+	<script src="https://cdn.tailwindcss.com/3.4.16" data-cfasync="false" onload="try{loadedTWind();}catch(e){}"></script>
+	<link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,500&amp;display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://empanadas.io/Content/Icons/fa/css/all.min.css">
+	<style>
+		* {
+		  font-family: "Ubuntu", sans-serif;
+		  font-optical-sizing: auto;
+		  font-style: normal;
+		  -webkit-font-smoothing: antialiased;
+		  -moz-osx-font-smoothing: grayscale;
+		  text-rendering: optimizeLegibility;
+		}
+	</style>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet">
+	
+    <div class="mx-auto max-w-screen-lg px-3 py-6">
+        <div class="border-t border-gray-600 pt-5">
+            <div class="text-sm text-gray-200">© Copyright <span id="year"></span></div>
+        </div>
+    </div>
+	<script async="" defer="" type="text/javascript">
+	  fetch('https://api.empanadas.io/v1/time.php')
+	  .then(function(response) {
+	   return response.text()
+	  }).then(function(r) {
+		 let rp = JSON.parse(r);
+		 //const dtb = document.getElementById("cfdw");
+		 let msec = r.mili;
+		 let date = new Date(r.date);
+		 console.log(date + "//"  + msec);
+	  });
+	</script>
+
+</body></html>
