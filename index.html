@@ -26,7 +26,6 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 	<link rel="manifest" href="/site.webmanifest">
 	<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5ND1GPZRH7" type="text/javascript"></script>
-	<script async="" src="/Content/JS/core.js?v=11524-1109" defer="" type="text/javascript"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orange Man Countdown</title>
@@ -44,7 +43,9 @@
 		}
 	</style>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet">
+	<body class="animated fadeIn faster">
 	
+	</body>
     <div class="mx-auto max-w-screen-lg px-3 py-6">
         <div class="border-t border-gray-600 pt-5">
             <div class="text-sm text-gray-200">© Copyright <span id="year"></span></div>
@@ -57,8 +58,8 @@
 	  }).then(function(r) {
 		 let rp = JSON.parse(r);
 		 //const dtb = document.getElementById("cfdw");
-		 let msec = r.mili;
-		 let date = new Date(r.date);
+		 let msec = rp.mili;
+		 let date = new Date(rp.date);
 		 console.log(date + "//"  + msec);
 	  });
 	</script>
