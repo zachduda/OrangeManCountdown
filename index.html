@@ -42,13 +42,13 @@
 		<div class="pt-10 p-5 text-white text-center mx-auto">
 			<img src="/Content/icon.png" width="125"  class="mx-auto" alt="An Orange" />
 			<br>
-			<h1 class="text-orange-200 font-bold text-2xl">The Orange Man Countdown</h1>
-			<p class="text-slate-200 text-sm">Because time doesn't stop for politics.</p>
-			<h2 class="text-white text-xl thtml">--d --h --m --.-s</h2>
+			<h1 class="text-orange-200 font-bold text-4xl">The Orange Man Countdown</h1>
+			<p class="text-slate-200">Because time doesn't stop for politics.</p>
+			<h2 class="text-white text-3xl thtml">--d --h --m --.-s</h2>
 			<br><br>
 			<p>Time however, did allow me to list all the reasons I have an unfavorable view on the current incumbant:</p>
 			<ul>
-				<li></li>
+				<li><a href="https://www.britannica.com/event/January-6-U-S-Capitol-attack" target="_blank"><b>#1</b> He directed a coup d’état of our US capitol on January 6th, 2021.</a></li>
 			</ul>
 		</div>
 		<div class="mx-auto max-w-screen-lg px-3 py-6">
@@ -78,6 +78,7 @@
 		let ms = Math.floor((df % _s) / 100 );
 		sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 	  }
+	  
 	  fetch('https://api.empanadas.io/v1/time.php')
 	  .then(function(response) {
 	   return response.text()
