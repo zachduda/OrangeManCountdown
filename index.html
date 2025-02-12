@@ -111,10 +111,7 @@
 		   return response.text()
 		  }).then(function(r) {
 			 let rp = JSON.parse(r);
-			 let st = new Date(rp.date);
-			 let ndf = ed-st;
-			 console.log("Time Sync Difference ->  " + (df-ndf) + "ms");
-			 df = ndf;
+			 srt = new Date(rp.date);
 			 if(init) {
 			    tm = setInterval(utmr, 100);
 				sid("year").innerHTML = st.getFullYear();
