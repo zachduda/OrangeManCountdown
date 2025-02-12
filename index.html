@@ -89,7 +89,7 @@
 	  let end = new Date("2028-01-20 11:00 EST");
 	  
 	  function utmr() { // update timer
-	  	srt+100;
+	  	srt = new Date(srt.getTime()+100);
 		
 	    let df = end-srt;
 		let _s  = 1000;
