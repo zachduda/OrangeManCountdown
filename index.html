@@ -123,13 +123,13 @@
 			return x1 + x2;
 	  }
 	  
-	  let uf = 50; // update frequency ms.
+	  let uf = 100; // update frequency ms.
 	  let st; // sync timer
 	  let tm; // countdown timer
 	  
 	  let srt = new Date(); // today
-	  const end = new Date("2028-01-20 11:00 EST");
-	  const beg = new Date("2025-01-20 11:00 EST");
+	  const end = new Date(1831996800000); // 2028-01-20 11:00AM EST/EDT
+	  const beg = new Date(1737388800000); // 2025-01-20 11:00AM EST/EDT
 	  
 	  function utmr() { // update timer
 	  	srt = new Date(srt.getTime()+uf);
