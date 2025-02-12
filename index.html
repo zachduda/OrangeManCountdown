@@ -40,7 +40,7 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet">
 	<body class="bg-slate-900 animated fadeIn faster">
 		<div class="pt-10 p-5 text-white text-center mx-auto">
-			<img src="/Content/icon.png" width="125" alt="An Orange" />
+			<img src="/Content/icon.png" width="125"  class="mx-auto" alt="An Orange" />
 			<br>
 			<h1 class="text-orange-200 font-bold text-2xl">The Orange Man Countdown</h1>
 			<p class="text-slate-200 text-sm">Because time doesn't stop for politics.</p>
@@ -66,18 +66,17 @@
 	  let df;
 	  
 	  function utmr() {
-			
-			let _s  = 1000;
-			let _m = _second * 60;
-			let _h = _minute * 60;
-			let _d = _hour * 24
-			
-		    let d = Math.floor(df / _d);
-			let h = Math.floor((df % _d) / _h);
-			let min = Math.floor((df % _h) / _m);
-			let sec = Math.floor((df % _m) / _s);
-			let ms = Math.floor((df % _s) / 100 );
-			sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+		let _s  = 1000;
+		let _m = _s * 60;
+		let _h = _m * 60;
+		let _d = _h * 24;
+
+		let d = Math.floor(df / _d);
+		let h = Math.floor((df % _d) / _h);
+		let min = Math.floor((df % _h) / _m);
+		let sec = Math.floor((df % _m) / _s);
+		let ms = Math.floor((df % _s) / 100 );
+		sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 	  }
 	  fetch('https://api.empanadas.io/v1/time.php')
 	  .then(function(response) {
