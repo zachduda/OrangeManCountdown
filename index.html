@@ -166,13 +166,14 @@
 			 console.log(r);
 			 let rp = JSON.parse(r);
 			 srt = new Date(rp.date);
+		  }).catch(function() {
+			 srt =  new Date();
+			 console.log("Failed. Using browser date.");
+		  }).finally(function () {
 			 if(init) {
 			    tm = setInterval(utmr, uf);
 				sid("year").innerHTML = srt.getFullYear();
 			 }
-		  }).catch(function() {
-			 srt =  new Date();
-			 console.log("Failed. Using browser date.");
 		  });
 	  }
 	  
