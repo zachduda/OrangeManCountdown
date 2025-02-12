@@ -40,8 +40,8 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet">
 	<body class="bg-slate-900 animated fadeIn faster">
 	<h1>The Orange Man Countdown</h1>
-	<p>Time doesn't stop for political alignment.</p>
-	<h2>--d --h --m --.-s</h2>
+	<p>Because time doesn't stop for politics.</p>
+	<h2 class="thtml">--d --h --m --.-s</h2>
 	<br><br>
 	<p>Time however, did allow me to list all the reasons I have an unfavorable view on the current incumbant:</p>
 	<ul>
@@ -54,6 +54,22 @@
         </div>
     </div>
 	<script async="" defer="" type="text/javascript">
+	  function sid(ssid) {
+		 return document.getElementById(ssid);
+	  }
+	  function updateTime() {
+			let _second = 1000;
+			let _minute = _second * 60;
+			let _hour = _minute * 60;
+			let _day = _hour * 24
+			
+		    let d = Math.floor(distance / _day);
+			let h = Math.floor( (distance % _day ) / _hour );
+			let min = Math.floor( (distance % _hour) / _minute );
+			let sec = Math.floor( (distance % _minute) / _second );
+			let ms = Math.floor( (distance % _second) / 100 );
+			sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+	  }
 	  fetch('https://api.empanadas.io/v1/time.php')
 	  .then(function(response) {
 	   return response.text()
@@ -62,8 +78,12 @@
 		 //const dtb = document.getElementById("cfdw");
 		 let msec = rp.mili;
 		 let date = new Date(rp.date);
+		 let over = new Date("2028-01-20 11:00 EST");
+		 let diff = over-date;
+		 
 		 console.log(date + "//"  + msec);
 	  });
+	  let timer = setInterval(updateTime, 100);
 	</script>
 </body>
 </html>
