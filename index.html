@@ -107,8 +107,9 @@
 	  }
 	  
 	  function sync(init=false) { // sync from time server
-		  fetch('https://zachduda.com/v2/time.php?cache='+Math.round(new Date().getTime()/1000))
-		  .then(function(response) {
+		  fetch('https://zachduda.com/v2/time.php?cache='+Math.round(new Date().getTime()/1000), {
+			  mode: 'no-cors'
+		  }).then(function(response) {
 		   return response.text()
 		  }).then(function(r) {
 			 let rp = JSON.parse(r);
