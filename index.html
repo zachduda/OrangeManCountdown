@@ -170,7 +170,7 @@
 			    tm = setInterval(utmr, uf);
 				sid("year").innerHTML = srt.getFullYear();
 			 }
-		  }).fail(function() {
+		  }).catch(function() {
 			 srt =  new Date();
 			 console.log("Failed. Using browser date.");
 		  });
