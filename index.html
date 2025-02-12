@@ -49,27 +49,32 @@
 				<li></li>
 			</ul>
 		</div>
+		<div class="mx-auto max-w-screen-lg px-3 py-6">
+			<div class="border-t border-gray-600 pt-5">
+				<div class="text-sm text-gray-200">© Copyright <span id="year"></span></div>
+			</div>
+		</div>
 	</body>
-    <div class="mx-auto max-w-screen-lg px-3 py-6">
-        <div class="border-t border-gray-600 pt-5">
-            <div class="text-sm text-gray-200">© Copyright <span id="year"></span></div>
-        </div>
-    </div>
 	<script async="" defer="" type="text/javascript">
 	  function sid(ssid) {
 		 return document.getElementById(ssid);
 	  }
-	  function updateTime() {
-			let _second = 1000;
-			let _minute = _second * 60;
-			let _hour = _minute * 60;
-			let _day = _hour * 24
+	  
+	  let tm;
+	  let df;
+	  
+	  function utmr() {
 			
-		    let d = Math.floor(distance / _day);
-			let h = Math.floor( (distance % _day ) / _hour );
-			let min = Math.floor( (distance % _hour) / _minute );
-			let sec = Math.floor( (distance % _minute) / _second );
-			let ms = Math.floor( (distance % _second) / 100 );
+			let _s  = 1000;
+			let _m = _second * 60;
+			let _h = _minute * 60;
+			let _d = _hour * 24
+			
+		    let d = Math.floor(df / _d);
+			let h = Math.floor((df % _d) / _h);
+			let min = Math.floor((df % _h) / _m);
+			let sec = Math.floor((df % _m) / _s);
+			let ms = Math.floor((df % _s) / 100 );
 			sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 	  }
 	  fetch('https://api.empanadas.io/v1/time.php')
@@ -77,15 +82,11 @@
 	   return response.text()
 	  }).then(function(r) {
 		 let rp = JSON.parse(r);
-		 //const dtb = document.getElementById("cfdw");
-		 let msec = rp.mili;
-		 let date = new Date(rp.date);
-		 let over = new Date("2028-01-20 11:00 EST");
-		 let diff = over-date;
-		 
-		 console.log(date + "//"  + msec);
+		 let st = new Date(rp.date);
+		 let ed = new Date("2028-01-20 11:00 EST");
+		 df = ed-st;
+		 tm = setInterval(utmr, 100);
 	  });
-	  let timer = setInterval(updateTime, 100);
 	</script>
 </body>
 </html>
