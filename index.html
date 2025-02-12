@@ -58,14 +58,22 @@
 		</div>
 	</body>
 	<script async="" defer="" type="text/javascript">
+	  /*
+			A silly little app written by Zach Duda.
+	     	<Contact>: zachduda.com/contact
+			<Discord>: zachduda.com/discord
+			License: CC-BY-NC-4
+	  */
+	 
 	  function sid(ssid) {
 		 return document.getElementById(ssid);
 	  }
 	  
-	  let tm;
-	  let df;
+	  let st; // sync timer
+	  let tm; // countdown timer
+	  let df; // date difference
 	  
-	  function utmr() {
+	  function utmr() { // update timer
 		let _s  = 1000;
 		let _m = _s * 60;
 		let _h = _m * 60;
@@ -79,17 +87,26 @@
 		sid("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 	  }
 	  
-	  fetch('https://api.empanadas.io/v1/time.php')
-	  .then(function(response) {
-	   return response.text()
-	  }).then(function(r) {
-		 let rp = JSON.parse(r);
-		 let st = new Date(rp.date);
-		 let ed = new Date("2028-01-20 11:00 EST");
-		 df = ed-st;
-		 tm = setInterval(utmr, 100);
-		 sid("year").innerHTML = st.getFullYear();
-	  });
+	  function sync(init=false) { // sync from time server
+		  fetch('https://api.empanadas.io/v1/time.php')
+		  .then(function(response) {
+		   return response.text()
+		  }).then(function(r) {
+			 let rp = JSON.parse(r);
+			 let st = new Date(rp.date);
+			 let ed = new Date("2028-01-20 11:00 EST");
+			 let ndf = ed-st;
+			 console.log("Time Sync Difference ->  " + (df-ndf) + "ms");
+			 df = ndf;
+			 if(init) {
+			    tm = setInterval(utmr, 100);
+				sid("year").innerHTML = st.getFullYear();
+			 }
+		  });
+	  }
+	  
+	  setInterval(sync, 10000);
+	  sync(true);
 	</script>
 </body>
 </html>
