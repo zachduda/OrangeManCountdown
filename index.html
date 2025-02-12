@@ -81,6 +81,7 @@
 		 return document.getElementById(ssid);
 	  }
 	  
+	  let uf = 50; // update frequency ms.
 	  let st; // sync timer
 	  let tm; // countdown timer
 	  let df; // date difference
@@ -89,7 +90,7 @@
 	  let end = new Date("2028-01-20 11:00 EST");
 	  
 	  function utmr() { // update timer
-	  	srt = new Date(srt.getTime()+100);
+	  	srt = new Date(srt.getTime()+uf);
 		
 	    let df = end-srt;
 		let _s  = 1000;
@@ -113,7 +114,7 @@
 			 let rp = JSON.parse(r);
 			 srt = new Date(rp.date);
 			 if(init) {
-			    tm = setInterval(utmr, 100);
+			    tm = setInterval(utmr, uf);
 				sid("year").innerHTML = srt.getFullYear();
 			 }
 		  });
