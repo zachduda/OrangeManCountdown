@@ -39,33 +39,62 @@
 	</style>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet">
 	<body class="bg-slate-900 animated fadeIn faster">
-		<div class="pt-10 p-5 text-white text-center mx-auto">
-			<img src="/Content/icon.png" width="125"  class="mx-auto" alt="An Orange" />
+		<div class="pt-20 p-5 text-white text-center mx-auto">
+			<img src="https://orange.zachduda.com/Content/icon.png" width="125"  class="mx-auto" alt="An Orange" />
 			<br>
 			<h1 class="text-orange-200 font-bold text-4xl">The Orange Man Countdown</h1>
-			<p class="text-slate-200">Because time doesn't stop for politics.</p>
-			<h2 class="text-white text-3xl" id="thtml">--d --h --m --.-s</h2>
-			<br><br>
-			<p>Time however, did allow me to list all the reasons I have an unfavorable view on the current incumbant:</p>
-			<p class="text-sm text-slate-400">Each reason is also a link to a creditable source.</p>
-			<ul class="text-slate-300">
-				<li>
+			<p class="text-slate-300/80">Because time doesn't stop for politics.</p>
+			<br>
+			<h2 class="text-slate-200 font-bold text-4xl" id="thtml"><i class="fa-solid fa-rotate fa-spin"></i></h2>
+			<br>
+			<br>
+			<hr style="max-width:500px;opacity:0.25;" class="mx-auto">
+			<br>
+			<div class="max-w-md p-5 mx-auto mb-5">
+				<p class="text-slate-300/85">Time however, did allow me to list all the reasons I have an unfavorable view on the current incumbant:</p>
+				<p class="text-sm text-slate-400">Each reason is also a link to a creditable source.</p>
+			</div>
+			<ul class="max-w-xl p-5 mx-auto text-slate-300 space-y-4">
+				<li class="text-orange-300 hover:text-orange-200">
 					<a href="https://www.britannica.com/event/January-6-U-S-Capitol-attack" target="_blank">
 						<b>#1</b>
 						He directed a coup d’état of our US capitol on January 6th, 2021.
 					</a>
 				</li>
-				<li>
+				<li class="text-slate-400 hover:text-slate-300">
 					<a href="https://docs.house.gov/meetings/FD/FD00/20240515/117301/HHRG-118-FD00-20240515-SD003.pdf" target="_blank">
 						<b>#2</b>
 						He lies. Constantly. 30,573 times to be exact in his first presidency alone.
 					</a>
 				</li>
+				<li class="text-orange-300 hover:text-orange-200">
+					<a href="https://www.npr.org/2025/02/07/g-s1-46893/trump-anti-trans-rights-executive-action-gender-ideology-confusion" target="_blank">
+						<b>#3</b>
+						He attacks transgender people. All. The. Time.
+					</a>
+				</li>
+				<li class="text-slate-400 hover:text-slate-300">
+					<a href="https://www.pbs.org/newshour/politics/trump-calls-nazi-hand-salute-comparisons-ridiculous" target="_blank">
+						<b>#4</b>
+						Nazi dog whistles, verbage, and salutes are used around him and he's cool with it.
+					</a>
+				</li>
+				<li class="text-orange-300 hover:text-orange-200">
+					<a href="https://doggett.house.gov/media/blog-post/timeline-trumps-coronavirus-responses" target="_blank">
+						<b>#5</b>
+						He disbanded the Pandemic Response team in 2018, left the World Health Organization in 2020, and led to a COVID-19 disaster.
+					</a>
+				</li>
+				<li class="text-slate-500">
+					and many many more....
+				</li>
 			</ul>
+			<br>
 		</div>
 		<div class="mx-auto max-w-screen-lg px-3 py-6">
 			<div class="border-t border-gray-600 pt-5">
-				<div class="text-sm text-gray-200">© Copyright <span id="year"></span></div>
+				<div class="text-sm text-slate-400 float-start">© Copyright <span id="year"></span></div>
+				<div class="text-sm text-slate-400 float-end">A website by <b><a class="text-slate-300 hover:text-blue-300 font-bold" href="https://zachduda.com">Zach</a><i class="fa-solid fa-heart text-rose-300 ml-1"></i></div>
 			</div>
 		</div>
 	</body>
@@ -81,13 +110,27 @@
 		 return document.getElementById(ssid);
 	  }
 	  
+	  
+	  function comma(num)  {
+			num += '';
+			var x = num.split('.');
+			var x1 = x[0];
+			var x2 = x.length > 1 ? '.' + x[1] : '';
+			var rgx = /(\d+)(\d{3})/;
+			while (rgx.test(x1)) {
+				x1 = x1.replace(rgx, '$1' + ',' + '$2');
+			}
+			return x1 + x2;
+	  }
+	  
 	  let uf = 50; // update frequency ms.
 	  let st; // sync timer
 	  let tm; // countdown timer
 	  let df; // date difference
 	  
 	  let srt = new Date(); // today
-	  let end = new Date("2028-01-20 11:00 EST");
+	  const end = new Date("2028-01-20 11:00 EST");
+	  const beg = new Date("2025-01-20 11:00 EST");
 	  
 	  function utmr() { // update timer
 	  	srt = new Date(srt.getTime()+uf);
@@ -103,21 +146,33 @@
 		let min = Math.floor((df % _h) / _m);
 		let sec = Math.floor((df % _m) / _s);
 		let ms = Math.floor((df % _s) / 100 );
-		sid("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+		let msg = comma(d)  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+
+		const elapsed = srt.getTime() - beg.getTime();
+		const prc_complete = (elapsed / df) * 100;
+
+		let prc = parseFloat(prc_complete.toFixed(2));
+  
+		msg += "<br>";
+		msg += "<p class='pt-3 text-sm text-slate-400'>Orange Man's term is <b class='text-orange-400'>"+prc+"%</b> complete.</p>";
+		sid("thtml").innerHTML = msg;
 	  }
 	  
 	  function sync(init=false) { // sync from time server
-		  fetch("https://zachduda.com/api/time.php"), {
-			  mode: 'no-cors'
-		  }.then(function(response) {
+		  fetch("https://zachduda.com/api/time.php", {
+		  }).then(function(response) {
 		   return response.text()
 		  }).then(function(r) {
+			 console.log(r);
 			 let rp = JSON.parse(r);
 			 srt = new Date(rp.date);
 			 if(init) {
 			    tm = setInterval(utmr, uf);
 				sid("year").innerHTML = srt.getFullYear();
 			 }
+		  }).fail(function() {
+			 srt =  new Date();
+			 console.log("Failed. Using browser date.");
 		  });
 	  }
 	  
