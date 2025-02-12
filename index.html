@@ -86,7 +86,7 @@
 	  let tm; // countdown timer
 	  let df; // date difference
 	  
-	  let srt; // today
+	  let srt = new Date(); // today
 	  let end = new Date("2028-01-20 11:00 EST");
 	  
 	  function utmr() { // update timer
@@ -107,7 +107,7 @@
 	  }
 	  
 	  function sync(init=false) { // sync from time server
-		  fetch('https://api.empanadas.io/v1/time.php?cache='+Math.round(new Date().getTime()/1000))
+		  fetch('https://zachduda.com/v2/time.php?cache='+Math.round(new Date().getTime()/1000))
 		  .then(function(response) {
 		   return response.text()
 		  }).then(function(r) {
