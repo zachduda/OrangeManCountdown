@@ -76,7 +76,7 @@
 		let min = Math.floor((df % _h) / _m);
 		let sec = Math.floor((df % _m) / _s);
 		let ms = Math.floor((df % _s) / 100 );
-		sidd("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+		sid("thtml").innerHTML = d  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 	  }
 	  
 	  fetch('https://api.empanadas.io/v1/time.php')
