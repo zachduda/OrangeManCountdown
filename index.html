@@ -126,13 +126,14 @@
 	  let uf = 100; // update frequency ms.
 	  let st; // sync timer
 	  let tm; // countdown timer
+	  let syspc = 2; // 5ms buffer. AKA assume it will take 5ms to run utmr() every 'var = uf' (100ms)
+	  let srt = (new Date()).getTime(); // today
 	  
-	  let srt = new Date(); // today
-	  const end = new Date(1831996800000); // 2028-01-20 11:00AM EST/EDT
-	  const beg = new Date(1737388800000); // 2025-01-20 11:00AM EST/EDT
+	  const end = 1831996800000; // 2028-01-20 11:00AM EST/EDT
+	  const beg = 1737388800000; // 2025-01-20 11:00AM EST/EDT
 	  
 	  function utmr() { // update timer
-	  	srt = new Date(srt.getTime()+uf);
+	  	srt = ((srt+uf)-syspc);
 		
 	    let df = end-srt;
 		let _s  = 1000;
@@ -147,7 +148,7 @@
 		let ms = Math.floor((df % _s) / 100 );
 		let msg = comma(d)  + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
 
-		const elapsed = srt.getTime() - beg.getTime();
+		const elapsed = srt - beg;
 		const prc_complete = (elapsed / df) * 100;
 
 		let prc = parseFloat(prc_complete.toFixed(2));
@@ -158,20 +159,28 @@
 	  }
 	  
 	  function sync(init=false) { // sync from time server
+		  const spr = (new Date()).getTime();
+		  let ping = 0;
 		  fetch("https://zachduda.com/api/time.php", {
 		  }).then(function(response) {
 		   return response.text()
 		  }).then(function(r) {
-			 console.log(r);
+		     const epr = (new Date()).getTime();
+			 const ping = epr-spr;
+			 console.log("Ping: " + ping + "ms");
+			 const ogsr = srt;
 			 let rp = JSON.parse(r);
-			 srt = new Date(rp.date);
+			 
+			 srt = ((new Date(rp.date)).getTime())-ping;
+			 const ogsrtdf = (srt-ogsr) - ping;
+			 console.log("Time server client difference: " + ogsrtdf + "ms");
 		  }).catch(function() {
-			 srt =  new Date();
+			 srt = (new Date()).getTime();
 			 console.log("Failed. Using browser date.");
 		  }).finally(function () {
 			 if(init) {
+				sid("year").innerHTML = (new Date(srt)).getFullYear();
 			    tm = setInterval(utmr, uf);
-				sid("year").innerHTML = srt.getFullYear();
 			 }
 		  });
 	  }
