@@ -147,8 +147,8 @@
             const elapsed = srt - beg;
             const prc_complete = (elapsed / df) * 100;
             let prc = parseFloat(prc_complete.toFixed(2));
-            msg += " < br > ";
-            msg += " < p class = 'pt-3 text-sm text-slate-400' > Orange Man 's term is  < b class = 'text-orange-400' > " + prc + " % < /b> complete. < /p>";
+            msg += "<br>";
+            msg += "<p class='pt-3 text-sm text-slate-400'>Orange Man's term is <b class='text-orange-400'>" + prc + "%</b> complete.</p>";
             sid("thtml").innerHTML = msg;
         }
 
