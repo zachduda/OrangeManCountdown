@@ -123,16 +123,19 @@
             }
             return x1 + x2;
         }
+		
+		const loadhtml = sid("thtml").innerHTML;
+		
         let uf = 100; // update frequency ms.
         let st; // sync timer
         let tm; // countdown timer
-        let syspc = 2; // 5ms buffer. AKA assume it will take 5ms to run utmr() every 'var = uf' (100ms)
+        let syspc = 2; // 2ms buffer. AKA assume it will take 2ms to run utmr() every 'var = uf' (100ms)
         let srt = new Date().getTime(); // today
         const end = 1831996800000; // 2028-01-20 11:00AM EST/EDT
         const beg = 1737388800000; // 2025-01-20 11:00AM EST/EDT
         function utmr() {
             // update timer
-            srt = srt + uf - syspc;
+            srt = srt + uf - (syspc*(uf/100));
             let df = end - srt;
             let _s = 1000;
             let _m = _s * 60;
@@ -143,7 +146,12 @@
             let min = Math.floor((df % _h) / _m);
             let sec = Math.floor((df % _m) / _s);
             let ms = Math.floor((df % _s) / 100);
-            let msg = comma(d) + " days " + h + "h " + min + "m " + sec + "." + ms + "s";
+            let msg = comma(d) + " days " + h + "h " + min + "m " + sec;
+			if(uf >= 1000) {
+				msg += "s";
+			} else {
+				msg += "." + ms + "s";
+			}
             const elapsed = srt - beg;
             const prc_complete = (elapsed / df) * 100;
             let prc = parseFloat(prc_complete.toFixed(2));
@@ -183,5 +191,20 @@
         }
         st = setInterval(sync, 60000);
         sync(true);
+		
+		function unfocused() {
+		    clearInterval(tm);
+			srt = srt-1000;
+			uf = 1000;
+			tm = setInterval(utmr, uf);
+		}
+		function refocused() {
+		    clearInterval(tm);
+		    uf = 100;
+		    sid("thtml").innerHTML = loadhtml;
+			sync(true);
+		}
+		window.addEventListener("blur", unfocused);
+		window.addEventListener("focus", refocused);
     </script>
 </html>
