@@ -199,6 +199,7 @@
 			tm = setInterval(utmr, uf);
 		}
 		function refocused() {
+			unfocused();
 		    clearInterval(tm);
 		    uf = 100;
 		    sid("thtml").innerHTML = loadhtml;
