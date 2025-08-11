@@ -217,13 +217,12 @@
 		
 		function unfocused() {
 		    clearInterval(tm);
-			srt = srt-1000;
+			srt = srt-2000;
 			uf = 1000;
 			tm = setInterval(utmr, uf);
 		}
 		function refocused() {
 			unfocused();
-		    clearInterval(tm);
 		    uf = 100;
 		    sid("thtml").innerHTML = loadhtml;
 			sync(true);
