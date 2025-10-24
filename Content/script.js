@@ -166,7 +166,7 @@
   // === Robust server sync (median-of-N) ===
   function fetchServerTimeSample() {
     const start = Date.now();
-    return fetch("https://zachduda.com/api/time.php", { cache: "no-store" })
+    return fetch("https://api.zachduda.com/time.php", { cache: "no-store" })
       .then(r => r.text())
       .then(text => {
         const endt = Date.now();
