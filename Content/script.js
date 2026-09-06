@@ -1,279 +1,190 @@
 /*
-	A silly little app written by Zach Duda.																															<Discord>: zachduda.com/discord
-	License: CC-BY-NC-4
-	
-	This script is not used. A minified version is inline the HTML due to size <3kb
+	That Orange Guy Countdown
+	A silly little app written by Zach Duda.   <Discord>: zachduda.com/discord
+	License: CC-BY-NC-4 - zachduda.com/license
+
+	This is the only copy of the script. index.html loads it with `defer`.
 */
 (function () {
-  // === DOM helpers ===
-  function sid(id) { return document.getElementById(id); }
-  const yearEl = sid("year");
-  const daysEl = sid("cd-days");    // create these elements in HTML
-  const hoursEl = sid("cd-hours");
-  const minsEl = sid("cd-mins");
-  const secsEl = sid("cd-secs");
-  const fracEl = sid("cd-frac");    // for .Xs when active
-  const prcEl  = sid("cd-prc");
-  const rootHtmlEl = sid("thtml");  // legacy container (kept for year and fallback)
-  const loadhtml = rootHtmlEl ? rootHtmlEl.innerHTML : "";
+	"use strict";
 
-  // If you don't have separate nodes, you can create them or fall back to innerHTML.
-  const useFieldNodes = !!(daysEl && hoursEl && minsEl && secsEl && fracEl && prcEl);
+	// ---------------------------------------------------------------- config
+	var TERM_START = 1737388800000; // 2025-01-20 11:00 ET
+	var TERM_END = 1831996800000; // 2028-01-20 11:00 ET
+	var TERM_MS = TERM_END - TERM_START;
 
-  // === Config ===
-  const END = 1831996800000; // 2028-01-20 11:00AM EST/EDT
-  const BEG = 1737388800000; // 2025-01-20 11:00AM EST/EDT
-  const NORMAL_UF = 100;     // 100ms visual granularity (shows .x)
-  const SLOW_UF = 1000;      // 1s while hidden
-  const RESYNC_INTERVAL = 60000; // 60s regular
-  const BRIEF_RESYNC_PERIOD = 15000; // after focus, sync for this period more often
-  const BRIEF_RESYNC_INTERVAL = 5000; // 5s for brief period
-  const SYNC_SAMPLES = 5;    // median-of-5 samples
-  const FOCUS_DEBOUNCE_MS = 200;
+	var TICK_MS = 100; // display granularity while visible
+	var REDUCED_TICK_MS = 1000; // ...when the visitor asked for less motion
+	var RESYNC_AFTER_MS = 300000; // only re-sync a tab that was away 5+ minutes
+	var TIME_API = "https://api.zachduda.com/time.php";
+	var FETCH_TIMEOUT_MS = 4000;
 
-  // === State ===
-  let uf = NORMAL_UF;
-  let serverBase = null;   // adjusted server ms timestamp (ms since epoch)
-  let perfAtSync = null;   // performance.now() at time of serverBase
-  let syncRtt = null;      // last RTT
-  let tmInterval = null;   // setInterval fallback id (used when hidden)
-  let rafId = null;        // rAF id when visible
-  let lastDisplayed = {};  // last displayed parts to avoid DOM writes
-  let hidden = false;
-  let blurPerf = null;
-  let lastFocusOrBlur = 0;
-  let lastSyncTime = 0;
-  let briefResyncUntil = 0;
+	// ----------------------------------------------------------------- nodes
+	function sid(id) {
+		return document.getElementById(id);
+	}
 
-  const nf = new Intl.NumberFormat(); // commas
+	var el = {
+		days: sid("cd-days"),
+		hours: sid("cd-hours"),
+		mins: sid("cd-mins"),
+		secs: sid("cd-secs"),
+		frac: sid("cd-frac"),
+		bar: sid("term-bar"),
+		track: sid("term-track"),
+		pct: sid("term-pct"),
+		year: sid("year"),
+	};
 
-  // === Utility functions ===
-  function nowSynced() {
-    if (serverBase != null && perfAtSync != null) {
-      return serverBase + (performance.now() - perfAtSync);
-    }
-    return Date.now();
-  }
+	if (!el.days || !el.hours || !el.mins || !el.secs) return;
 
-  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+	var nf = new Intl.NumberFormat();
+	var reduceMotion = window.matchMedia
+		? window.matchMedia("(prefers-reduced-motion: reduce)")
+		: null;
 
-  function pad(n) { return n.toString().padStart(2, "0"); }
+	// ----------------------------------------------------------------- clock
+	// performance.now() is monotonic: it keeps counting while the tab is hidden
+	// and is immune to the device clock being changed underneath us. We take a
+	// single reading from the time API, store the offset, and never poll again.
+	var TIME_ORIGIN =
+		typeof performance.timeOrigin === "number"
+			? performance.timeOrigin
+			: Date.now() - performance.now();
 
-  function computeParts(df) {
-    if (df < 0) df = 0;
-    const _s = 1000, _m = _s * 60, _h = _m * 60, _d = _h * 24;
-    const days = Math.floor(df / _d);
-    const hours = Math.floor((df % _d) / _h);
-    const mins = Math.floor((df % _h) / _m);
-    const secs = Math.floor((df % _m) / _s);
-    const frac = Math.floor((df % _s) / 100); // 0-9 -> .X
-    return { days, hours, mins, secs, frac, remaining: df };
-  }
+	var skew = 0; // serverNow - deviceNow, in ms
+	var lastSyncAt = 0;
+	var syncing = null;
 
-  function updateDOM(parts) {
-    // Only update changed fields.
-    if (useFieldNodes) {
-      if (lastDisplayed.days !== parts.days) {
-        daysEl.textContent = nf.format(parts.days) + " days";
-        lastDisplayed.days = parts.days;
-      }
-      if (lastDisplayed.hours !== parts.hours) {
-        hoursEl.textContent = parts.hours + "h";
-        lastDisplayed.hours = parts.hours;
-      }
-      if (lastDisplayed.mins !== parts.mins) {
-        minsEl.textContent = parts.mins + "m";
-        lastDisplayed.mins = parts.mins;
-      }
-      if (lastDisplayed.secs !== parts.secs) {
-        secsEl.textContent = parts.secs;
-        lastDisplayed.secs = parts.secs;
-      }
-      if (uf < 1000) {
-        if (lastDisplayed.frac !== parts.frac) {
-          fracEl.textContent = "." + parts.frac + "s";
-          lastDisplayed.frac = parts.frac;
-        }
-      } else {
-        if (lastDisplayed.frac !== "s") {
-          fracEl.textContent = "s";
-          lastDisplayed.frac = "s";
-        }
-      }
-      // progress percent
-      const elapsed = clamp(nowSynced() - BEG, 0, END - BEG);
-      const prc = parseFloat(((elapsed / (END - BEG)) * 100).toFixed(2));
-      if (lastDisplayed.prc !== prc) {
-        prcEl.innerHTML = "Orange Man's term is <b class='text-orange-400'>" + prc + "%</b> complete.";
-        lastDisplayed.prc = prc;
-      }
-    } else {
-      // fallback: single container innerHTML but diff full string
-      const showMs = uf < 1000;
-      let html = nf.format(parts.days) + " days " + parts.hours + "h " + parts.mins + "m " + parts.secs;
-      html += showMs ? "." + parts.frac + "s" : "s";
-      const elapsed = clamp(nowSynced() - BEG, 0, END - BEG);
-      const prc = parseFloat(((elapsed / (END - BEG)) * 100).toFixed(2));
-      html += "<br><p class='pt-3 text-sm text-slate-400'>Orange Man's term is <b class='text-orange-400'>" + prc + "%</b> complete.</p>";
-      if (lastDisplayed.html !== html) {
-        rootHtmlEl.innerHTML = html;
-        lastDisplayed.html = html;
-      }
-    }
-  }
+	function now() {
+		return TIME_ORIGIN + performance.now() + skew;
+	}
 
-  function stopAllTimers() {
-    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-    if (tmInterval) { clearInterval(tmInterval); tmInterval = null; }
-  }
+	function syncClock() {
+		if (syncing) return syncing;
 
-  // === Timing loop ===
-  function tick() {
-    const srt = nowSynced();
-    const df = END - srt;
-    const parts = computeParts(df);
-    updateDOM(parts);
-    if (parts.remaining <= 0) {
-      stopAllTimers();
-    }
-  }
+		var controller =
+			typeof AbortController === "function" ? new AbortController() : null;
+		var bail = controller
+			? setTimeout(function () {
+					controller.abort();
+			  }, FETCH_TIMEOUT_MS)
+			: null;
+		var sentAt = performance.now();
 
-  function startVisibleLoop() {
-    stopAllTimers();
-    // rAF loop; we use rAF and only redraw when needed (updateDOM does diffs)
-    function rafLoop() {
-      tick();
-      rafId = requestAnimationFrame(rafLoop);
-    }
-    rafLoop();
-  }
+		syncing = fetch(TIME_API, {
+			cache: "no-store",
+			signal: controller ? controller.signal : undefined,
+		})
+			.then(function (res) {
+				if (!res.ok) throw new Error("HTTP " + res.status);
+				return res.json();
+			})
+			.then(function (body) {
+				var stamp = new Date(body.date).getTime();
+				if (!isFinite(stamp)) throw new Error("unparseable date");
 
-  function startHiddenLoop() {
-    stopAllTimers();
-    tmInterval = setInterval(tick, uf);
-    // run one immediate tick
-    tick();
-  }
+				// The server wrote `stamp` somewhere inside the round trip; assume
+				// the midpoint, so by the time the response landed the true time had
+				// already moved on by half the round trip.
+				var rtt = performance.now() - sentAt;
+				skew = stamp + rtt / 2 - (TIME_ORIGIN + performance.now());
+			})
+			.catch(function () {
+				skew = 0; // API unreachable: fall back to the device clock
+			})
+			.then(function () {
+				if (bail) clearTimeout(bail);
+				lastSyncAt = Date.now();
+				syncing = null;
+			});
 
-  function startLoop() {
-    if (!document.hidden && typeof requestAnimationFrame === "function") {
-      startVisibleLoop();
-    } else {
-      startHiddenLoop();
-    }
-  }
+		return syncing;
+	}
 
-  // === Robust server sync (median-of-N) ===
-  function fetchServerTimeSample() {
-    const start = Date.now();
-    return fetch("https://api.zachduda.com/time.php", { cache: "no-store" })
-      .then(r => r.text())
-      .then(text => {
-        const endt = Date.now();
-        const rtt = endt - start;
-        const parsed = JSON.parse(text);
-        const serverMs = new Date(parsed.date).getTime();
-        // Adjust by half RTT
-        const adjusted = serverMs - Math.round(rtt / 2);
-        return { adjusted, rtt };
-      })
-      .catch(() => {
-        const now = Date.now();
-        return { adjusted: now, rtt: 0 };
-      });
-  }
+	// ---------------------------------------------------------------- render
+	var shown = {}; // last value written per node, so we only touch what changed
 
-  async function medianSyncSamples(n) {
-    const promises = [];
-    for (let i = 0; i < n; i++) promises.push(fetchServerTimeSample());
-    const results = await Promise.all(promises);
-    // sort by adjusted times and take median
-    const adjustedArr = results.map(r => r.adjusted).sort((a, b) => a - b);
-    const rttArr = results.map(r => r.rtt).sort((a, b) => a - b);
-    const medianAdjusted = adjustedArr[Math.floor(adjustedArr.length / 2)];
-    const medianRtt = rttArr[Math.floor(rttArr.length / 2)];
-    // set serverBase using performance.now() reference
-    serverBase = medianAdjusted;
-    perfAtSync = performance.now();
-    syncRtt = medianRtt;
-    lastSyncTime = Date.now();
-  }
+	function write(node, key, value) {
+		if (!node || shown[key] === value) return;
+		node.textContent = value;
+		shown[key] = value;
+	}
 
-  // === Sync management and scheduling ===
-  let ongoingSync = null;
-  async function sync(nowInit = false) {
-    // Prevent overlapping syncs
-    if (ongoingSync) return ongoingSync;
-    ongoingSync = (async () => {
-      try {
-        await medianSyncSamples(SYNC_SAMPLES);
-        if (nowInit && yearEl) yearEl.textContent = new Date(nowSynced()).getFullYear();
-      } finally {
-        ongoingSync = null;
-      }
-    })();
-    return ongoingSync;
-  }
+	function pad(n) {
+		return n < 10 ? "0" + n : "" + n;
+	}
 
-  // Periodic sync loop with brief high-frequency resync after focus
-  setInterval(() => {
-    const now = Date.now();
-    const interval = (now < briefResyncUntil) ? BRIEF_RESYNC_INTERVAL : RESYNC_INTERVAL;
-    if (now - lastSyncTime >= interval) sync();
-  }, 1000);
+	function render() {
+		var left = TERM_END - now();
+		if (left < 0) left = 0;
 
-  // === Visibility, focus/blur handling with debounce ===
-  function handleBlur() {
-    const now = Date.now();
-    if (now - lastFocusOrBlur < FOCUS_DEBOUNCE_MS) return;
-    lastFocusOrBlur = now;
-    hidden = true;
-    blurPerf = performance.now();
-    // reduce frequency
-    uf = SLOW_UF;
-    startLoop();
-  }
+		write(el.days, "days", nf.format(Math.floor(left / 86400000)));
+		write(el.hours, "hours", pad(Math.floor(left / 3600000) % 24));
+		write(el.mins, "mins", pad(Math.floor(left / 60000) % 60));
+		write(el.secs, "secs", pad(Math.floor(left / 1000) % 60));
+		write(el.frac, "frac", "." + Math.floor((left % 1000) / 100));
 
-  function handleFocus() {
-    const now = Date.now();
-    if (now - lastFocusOrBlur < FOCUS_DEBOUNCE_MS) return;
-    lastFocusOrBlur = now;
-    hidden = false;
-    // account for time passage during blur using perf
-    if (blurPerf != null && perfAtSync != null) {
-      const elapsed = performance.now() - blurPerf;
-      perfAtSync += elapsed; // advance reference so nowSynced is continuous
-    }
-    blurPerf = null;
-    uf = NORMAL_UF;
-    // quick UI reset if needed
-    if (rootHtmlEl) rootHtmlEl.innerHTML = loadhtml;
-    // resync immediately and briefly increase resync frequency
-    sync(true).then(() => {
-      briefResyncUntil = Date.now() + BRIEF_RESYNC_PERIOD;
-      startLoop();
-    });
-  }
+		var pct = ((now() - TERM_START) / TERM_MS) * 100;
+		if (pct < 0) pct = 0;
+		if (pct > 100) pct = 100;
 
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) handleBlur(); else handleFocus();
-  });
-  window.addEventListener("blur", handleBlur);
-  window.addEventListener("focus", handleFocus);
+		// Four decimals keeps the bar creeping without repainting every tick.
+		var width = pct.toFixed(4) + "%";
+		if (shown.width !== width) {
+			if (el.bar) el.bar.style.width = width;
+			shown.width = width;
+		}
 
-  // Ensure we clear timers when page unloads
-  window.addEventListener("pagehide", stopAllTimers);
-  window.addEventListener("beforeunload", stopAllTimers);
+		var label = pct.toFixed(2);
+		if (shown.pct !== label) {
+			shown.pct = label;
+			if (el.pct) el.pct.textContent = label + "%";
+			if (el.track) {
+				el.track.setAttribute("aria-valuenow", label);
+				el.track.setAttribute("aria-valuetext", label + " percent complete");
+			}
+		}
 
-  // === Initialization ===
-  (async function init() {
-    // Ensure nodes exist or create fallback structure if not
-    //if (!useFieldNodes) {
-      // Optional: create elements inside thtml if specific nodes are missing.
-      // Keep simple fallback: set rootHtmlEl content on init via sync(true)
-    //}
-    await sync(true);
-    startLoop();
-  })();
+		return left;
+	}
 
+	// ------------------------------------------------------------------ loop
+	// A self-correcting setTimeout aligned to the next 100ms boundary. Browsers
+	// already throttle background timers to ~1/s, so there is no hidden-tab
+	// bookkeeping to do here.
+	var timer = null;
+
+	function loop() {
+		if (render() <= 0) {
+			document.documentElement.classList.add("term-over");
+			return;
+		}
+		var step = reduceMotion && reduceMotion.matches ? REDUCED_TICK_MS : TICK_MS;
+		timer = setTimeout(loop, step - (Date.now() % step));
+	}
+
+	function restart() {
+		if (timer) clearTimeout(timer);
+		loop();
+	}
+
+	document.addEventListener("visibilitychange", function () {
+		if (document.hidden) return;
+		restart(); // catch up instantly instead of waiting out a throttled tick
+		if (Date.now() - lastSyncAt > RESYNC_AFTER_MS) syncClock().then(render);
+	});
+
+	// Safari/Firefox restore from the back-forward cache with timers frozen.
+	window.addEventListener("pageshow", function (e) {
+		if (e.persisted) restart();
+	});
+
+	// ------------------------------------------------------------------ init
+	if (el.year) el.year.textContent = new Date().getFullYear();
+
+	// Paint from the device clock right away — the countdown is the page, it
+	// should not wait on a network round trip — then correct once the API answers.
+	loop();
+	syncClock().then(render);
 })();
