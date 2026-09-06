@@ -10,7 +10,7 @@
 
 	// ---------------------------------------------------------------- config
 	var TERM_START = 1737388800000; // 2025-01-20 11:00 ET
-	var TERM_END = 1831996800000; // 2028-01-20 11:00 ET
+	var TERM_END = 1863802800000; // 2029-01-20 12:00 ET
 	var TERM_MS = TERM_END - TERM_START;
 
 	var TICK_MS = 100; // display granularity while visible
