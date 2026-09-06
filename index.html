@@ -69,6 +69,43 @@
                 background-attachment: scroll;
             }
 
+            /* A display utility outranks the UA's [hidden] rule, so anything the
+               script hides with .hidden = true needs this to actually go away. */
+            [hidden] {
+                display: none !important;
+            }
+
+            /* The toggle's active state is driven entirely by aria-pressed, so the
+               accessible state and the visible state cannot drift apart. */
+            .mode-btn {
+                appearance: none;
+                border: 0;
+                background-color: transparent;
+                border-radius: 9999px;
+                padding: 0.375rem 1rem;
+                font-size: 0.8125rem;
+                line-height: 1.25rem;
+                font-weight: 500;
+                color: #94a3b8;
+                cursor: pointer;
+                transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+            }
+
+            .mode-btn:hover {
+                color: #e2e8f0;
+            }
+
+            .mode-btn:focus-visible {
+                outline: 2px solid #fb923c;
+                outline-offset: 2px;
+            }
+
+            .mode-btn[aria-pressed="true"] {
+                background-color: rgba(249, 115, 22, 0.16);
+                color: #fdba74;
+                box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.35);
+            }
+
             /* Digits keep a constant width so the countdown never jitters. */
             .num {
                 font-variant-numeric: tabular-nums;
@@ -141,10 +178,18 @@
 
             <!-- ----------------------------------------------- countdown -->
             <section
+                id="countdown"
                 aria-label="Time remaining in the current term"
                 role="timer"
                 class="rise mx-auto mt-12 max-w-3xl rounded-3xl border border-white/10 bg-slate-900/50 p-5 shadow-2xl sm:p-8"
             >
+                <div class="mb-6 flex justify-center">
+                    <div role="group" aria-label="Show time remaining or time served" class="inline-flex rounded-full border border-white/10 bg-white/5 p-1">
+                        <button type="button" id="mode-left" class="mode-btn" aria-pressed="true">Time left</button>
+                        <button type="button" id="mode-served" class="mode-btn" aria-pressed="false">Time served</button>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 gap-3 text-center sm:grid-cols-4 sm:gap-4">
                         <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-5 sm:px-3 sm:py-6">
                             <div class="num text-4xl font-bold tracking-tight text-white sm:text-5xl"><span id="cd-days">&mdash;</span></div>
@@ -165,6 +210,10 @@
                 </div>
 
                 <!-- ------------------------------------- progress bar -->
+                <p class="mt-4 text-center text-xs uppercase tracking-widest text-slate-500">
+                    <span id="cd-caption">still to go</span>
+                </p>
+
                 <div class="mt-8">
                     <p class="text-center text-sm text-slate-300">
                         <b id="term-pct" class="num font-bold text-orange-300">&mdash;</b> of the term served
@@ -188,6 +237,12 @@
                         <span>Jan 20, 2028</span>
                     </div>
                 </div>
+
+                <p
+                    id="net-status"
+                    hidden
+                    class="mt-6 flex items-center justify-center gap-2 rounded-xl bg-amber-500/10 px-4 py-2 text-center text-xs text-amber-200/90 ring-1 ring-inset ring-amber-400/20"
+                ></p>
 
                 <p id="term-done" class="mt-6 text-center text-lg font-bold text-orange-300">That&rsquo;s a wrap. The term is over.</p>
             </section>
@@ -439,5 +494,14 @@
                 </p>
             </div>
         </footer>
+        <script>
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", function () {
+                    navigator.serviceWorker.register("/sw.js").catch(function () {
+                        /* offline support is a bonus, never a requirement */
+                    });
+                });
+            }
+        </script>
     </body>
 </html>
