@@ -35,130 +35,12 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ND1GPZRH7"></script>
-        <script>
-            window.dataLayer = window.dataLayer || [];
-            function gtag() {
-                dataLayer.push(arguments);
-            }
-            gtag("js", new Date());
-            gtag("config", "G-5ND1GPZRH7");
-        </script>
-
+        <script>function gtag(){dataLayer.push(arguments)}window.dataLayer=window.dataLayer||[],gtag("js",new Date),gtag("config","G-5ND1GPZRH7");</script>
         <script src="https://zachduda.com/Content/JS/tailwind.js" data-cfasync="false"></script>
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,500&amp;display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://empanadas.io/Content/Icons/fa/css/all.min.css" />
         <script src="/Content/script.js" defer></script>
-
-        <style>
-            html,
-            body {
-                font-family: "Ubuntu", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-            }
-
-            body {
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                text-rendering: optimizeLegibility;
-            }
-
-            /* Warm haze behind the masthead, so the page has a focal point
-               without needing an image. Layered over bg-slate-950. */
-            body {
-                background-image: radial-gradient(60% 520px at 50% 0%, rgba(249, 115, 22, 0.16), transparent 70%);
-                background-repeat: no-repeat;
-                background-attachment: scroll;
-            }
-
-            /* A display utility outranks the UA's [hidden] rule, so anything the
-               script hides with .hidden = true needs this to actually go away. */
-            [hidden] {
-                display: none !important;
-            }
-
-            /* The toggle's active state is driven entirely by aria-pressed, so the
-               accessible state and the visible state cannot drift apart. */
-            .mode-btn {
-                appearance: none;
-                border: 0;
-                background-color: transparent;
-                border-radius: 9999px;
-                padding: 0.375rem 1rem;
-                font-size: 0.8125rem;
-                line-height: 1.25rem;
-                font-weight: 500;
-                color: #94a3b8;
-                cursor: pointer;
-                transition: color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-            }
-
-            .mode-btn:hover {
-                color: #e2e8f0;
-            }
-
-            .mode-btn:focus-visible {
-                outline: 2px solid #fb923c;
-                outline-offset: 2px;
-            }
-
-            .mode-btn[aria-pressed="true"] {
-                background-color: rgba(249, 115, 22, 0.16);
-                color: #fdba74;
-                box-shadow: inset 0 0 0 1px rgba(251, 146, 60, 0.35);
-            }
-
-            /* Digits keep a constant width so the countdown never jitters. */
-            .num {
-                font-variant-numeric: tabular-nums;
-                font-feature-settings: "tnum" 1;
-            }
-
-            #cd-frac {
-                display: inline-block;
-                width: 1.4ch;
-                text-align: left;
-            }
-
-            .rise {
-                animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-
-            @keyframes rise {
-                from {
-                    opacity: 0;
-                    transform: translateY(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: none;
-                }
-            }
-
-            /* Swapped in by script.js once the countdown reaches zero. */
-            #term-done {
-                display: none;
-            }
-
-            .term-over #term-done {
-                display: block;
-            }
-
-            @media (prefers-reduced-motion: reduce) {
-                #cd-frac {
-                    display: none;
-                }
-
-                .rise {
-                    animation: none;
-                }
-
-                *,
-                *::before,
-                *::after {
-                    transition-duration: 0.01ms !important;
-                    animation-duration: 0.01ms !important;
-                }
-            }
-        </style>
+        <style>body,html{font-family:Ubuntu,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}body{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;background-image:radial-gradient(60% 520px at 50% 0,rgba(249,115,22,.16),transparent 70%);background-repeat:no-repeat;background-attachment:scroll}[hidden]{display:none!important}.mode-btn{appearance:none;border:0;background-color:transparent;border-radius:9999px;padding:.375rem 1rem;font-size:.8125rem;line-height:1.25rem;font-weight:500;color:#94a3b8;cursor:pointer;transition:color .2s ease,background-color .2s ease,box-shadow .2s ease}.mode-btn:hover{color:#e2e8f0}.mode-btn:focus-visible{outline:2px solid #fb923c;outline-offset:2px}.mode-btn[aria-pressed=true]{background-color:rgba(249,115,22,.16);color:#fdba74;box-shadow:inset 0 0 0 1px rgba(251,146,60,.35)}.num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}#cd-frac{display:inline-block;width:1.4ch;text-align:left}.rise{animation:rise .5s cubic-bezier(.22,1,.36,1) both}@keyframes rise{0%{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}#term-done{display:none}.term-over #term-done{display:block}@media (prefers-reduced-motion:reduce){#cd-frac{display:none}.rise{animation:none}*,:after,:before{transition-duration:.01ms!important;animation-duration:.01ms!important}}</style>
     </head>
 
     <body class="bg-slate-950 text-slate-200 antialiased">
@@ -494,14 +376,6 @@
                 </p>
             </div>
         </footer>
-        <script>
-            if ("serviceWorker" in navigator) {
-                window.addEventListener("load", function () {
-                    navigator.serviceWorker.register("/sw.js").catch(function () {
-                        /* offline support is a bonus, never a requirement */
-                    });
-                });
-            }
-        </script>
+        <script>"serviceWorker"in navigator&&window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})});</script>
     </body>
 </html>
