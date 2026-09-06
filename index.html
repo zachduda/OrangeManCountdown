@@ -2,25 +2,38 @@
 <html class="dark" lang="en">
     <head>
         <!-- Written by Zach Duda || zachduda.com || CC-BY-NC-4 -->
-        <link rel="preconnect" href="https://empanadas.io" />
-        <link rel="preconnect" href="https://zachduda.com" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta property="og:locale" content="en_US" />
-        <meta name="og:country-name" content="USA" />
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>That Orange Guy Countdown</title>
+        <meta name="description" content="A countdown until the most insufferable guy on earth loses his job." />
+        <meta name="keywords" content="That Orange Guy Countdown, Orange Guy, Orange Countdown, Donald Trump, Trump, Trump Countdown, Trump Timer" />
         <meta name="robots" content="index,follow" />
         <meta name="theme-color" content="#0f172a" />
-        <link rel="apple-touch-startup-image" href="https://orange.zachduda.com/" />
-        <meta name="keywords" content="That Orange Guy Countdown, Orange Guy, Orange Countdown, Donald Trump, Trump, Trump Countdown, Trump Timer" />
-        <meta name="og:title" content="That Orange Guy Countdown" />
-        <meta name="og:site_name" content="That Orange Guy Countdown" />
-        <meta name="og:type" content="website" />
-        <meta name="og:image" content="https://orange.zachduda.com/Content/icon.png" />
-        <meta name="og:description" content="A countdown until the most insufferable guy on earth loses his job." />
-        <meta name="description" content="A countdown until the most insufferable guy on earth loses his job." />
+        <meta name="color-scheme" content="dark" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:country-name" content="USA" />
+        <meta property="og:title" content="That Orange Guy Countdown" />
+        <meta property="og:site_name" content="That Orange Guy Countdown" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://orange.zachduda.com/" />
+        <meta property="og:image" content="https://orange.zachduda.com/Content/icon.png" />
+        <meta property="og:description" content="A countdown until the most insufferable guy on earth loses his job." />
+        <meta name="twitter:card" content="summary_large_image" />
+
+        <link rel="canonical" href="https://orange.zachduda.com/" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
         <link rel="manifest" href="/site.webmanifest" />
+
+        <link rel="preconnect" href="https://api.zachduda.com" />
+        <link rel="preconnect" href="https://zachduda.com" />
+        <link rel="preconnect" href="https://empanadas.io" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ND1GPZRH7"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
@@ -30,136 +43,401 @@
             gtag("js", new Date());
             gtag("config", "G-5ND1GPZRH7");
         </script>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>That Orange Guy Countdown</title>
-        <script src="https://zachduda.com/Content/JS/tailwind.js" data-cfasync="false" onload="try{loadedTWind();}catch(e){}"></script>
+
+        <script src="https://zachduda.com/Content/JS/tailwind.js" data-cfasync="false"></script>
         <link href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,500&amp;display=swap" rel="stylesheet" />
         <link rel="stylesheet" href="https://empanadas.io/Content/Icons/fa/css/all.min.css" />
+        <script src="/Content/script.js" defer></script>
+
         <style>
-            * {
-                font-family: "Ubuntu", sans-serif;
-                font-optical-sizing: auto;
-                font-style: normal;
+            html,
+            body {
+                font-family: "Ubuntu", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+            }
+
+            body {
                 -webkit-font-smoothing: antialiased;
                 -moz-osx-font-smoothing: grayscale;
                 text-rendering: optimizeLegibility;
             }
+
+            /* Warm haze behind the masthead, so the page has a focal point
+               without needing an image. Layered over bg-slate-950. */
+            body {
+                background-image: radial-gradient(60% 520px at 50% 0%, rgba(249, 115, 22, 0.16), transparent 70%);
+                background-repeat: no-repeat;
+                background-attachment: scroll;
+            }
+
+            /* Digits keep a constant width so the countdown never jitters. */
+            .num {
+                font-variant-numeric: tabular-nums;
+                font-feature-settings: "tnum" 1;
+            }
+
+            #cd-frac {
+                display: inline-block;
+                width: 1.4ch;
+                text-align: left;
+            }
+
+            .rise {
+                animation: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            @keyframes rise {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: none;
+                }
+            }
+
+            /* Swapped in by script.js once the countdown reaches zero. */
+            #term-done {
+                display: none;
+            }
+
+            .term-over #term-done {
+                display: block;
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                #cd-frac {
+                    display: none;
+                }
+
+                .rise {
+                    animation: none;
+                }
+
+                *,
+                *::before,
+                *::after {
+                    transition-duration: 0.01ms !important;
+                    animation-duration: 0.01ms !important;
+                }
+            }
         </style>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.compat.css" rel="stylesheet" />
     </head>
-    <body class="bg-slate-950 animated fadeIn faster">
-        <div class="pt-40 p-5 text-white text-center mx-auto">
-            <object data="https://orange.zachduda.com/icon.svg" width="125" class="mx-auto shadow shadow-3xl" alt="An Orange"></object>
-            <br>
-            <h1 class="text-orange-200 font-bold text-4xl" style="text-shadow: 2px 2px 1px rgba(255, 90, 0, 0.3);">That Orange Guy Countdown</h1>
-            <p class="pt-2 text-slate-300/80">Because time doesn't stop for politics.</p>
-            <br>
-            <h2 class="pt-4 text-slate-200 font-bold text-4xl sm:text-5xl" id="thtml">
-                <i class="fa-solid fa-rotate fa-spin"></i>
-				<br>
-            </h2>
-            <br><br><br>
-            <hr style="max-width: 500px; opacity: 0.25;" class="mx-auto" />
-            <br>
-            <div class="max-w-lg p-5 mx-auto mb-5">
-                <p class="text-lg text-slate-300">Time however, did allow me to list a few the reasons I have an unfavorable view on the current incumbant.</p>
-                <p class="pt-2 text-sm text-slate-400">Each reason will also link to a creditable source.</p>
-            </div>
-            <ul class="max-w-xl p-5 mx-auto text-slate-300 space-y-4">
-                <li class="text-orange-300 hover:text-orange-200">
-                    <a href="https://www.britannica.com/event/January-6-U-S-Capitol-attack" target="_blank">
-						<b>#1</b> He directed a coup d’état of our US capitol on January 6th, 2021.
-					</a>
-                </li>
-                <li class="text-slate-400 hover:text-slate-300">
-                    <a href="https://docs.house.gov/meetings/FD/FD00/20240515/117301/HHRG-118-FD00-20240515-SD003.pdf" target="_blank">
-						<b>#2</b> He lies. Constantly. 30,573 times to be exact in his first presidency alone.
-					</a>
-                </li>
-                <li class="text-orange-300 hover:text-orange-200">
-                    <a href="https://www.npr.org/2025/02/07/g-s1-46893/trump-anti-trans-rights-executive-action-gender-ideology-confusion" target="_blank">
-						<b>#3</b> He attacks transgender people. All. The. Time.
-					</a>
-                </li>
-                <li class="text-slate-400 hover:text-slate-300">
-                    <a href="https://www.pbs.org/newshour/politics/trump-calls-nazi-hand-salute-comparisons-ridiculous" target="_blank">
-						<b>#4</b> Nazi dog whistles, verbage, and salutes are used around him and he's cool with it.
-					</a>
-                </li>
-                <li class="text-orange-300 hover:text-orange-200">
-                    <a href="https://doggett.house.gov/media/blog-post/timeline-trumps-coronavirus-responses" target="_blank">
-                        <b>#5</b> He disbanded the Pandemic Response team in 2018, left the World Health Organization in 2020, and led to a COVID-19 disaster.
-                    </a>
-                </li>
-				<li class="text-slate-400 hover:text-slate-300">
-                    <a href="https://apnews.com/article/kilmar-abrego-garcia-el-salvador-trump-deported-e537cfb69a9840046b5d3e512509e9a8" target="_blank">
-                        <b>#6</b> He violated a court order then refused to admit or fix the deportation of an innocent man.
-                    </a>
-                </li>
-				<li class="text-orange-300 hover:text-orange-200">
-                    <a href="https://www.npr.org/2025/04/10/nx-s1-5360062/why-some-are-accusing-trump-of-manipulating-stock-markets" target="_blank">
-                        <b>#7</b> He manipulated the stock market, allowing billionares to profit after hinting to his reversal on tariffs.
-                    </a>
-                </li>
-				<li class="text-slate-400 hover:text-slate-300">
-				    <a href="https://www.snopes.com/news/2024/01/06/epstein-list-trump/" target="_blank">
-                        <b>#8</b> Jeffery Epstien (convicted child *** offender) can be spotted with him on multiple occasions and kept a list with his name in it.
-                    </a>
-                </li>
-				<li class="text-orange-300 hover:text-orange-300">
-				    <a href="https://www.pbs.org/newshour/nation/south-korean-workers-who-were-detained-in-a-hyundai-factory-raid-are-now-headed-home-heres-what-else-to-know/" target="_blank">
-                        <b>#9</b> His policy allowed for wrongful deportation of skilled Korean workers at Hyundai with valid work visas, losing the US a full $7.6 billion investment and destroying relationships with South Korea.
-                    </a>
-                </li>
-                <li class="text-slate-400 hover:text-slate-300">
-				    <a href="https://www.cbc.ca/news/world/epstein-documents-release-delay-9.7058700" target="_blank">
-                        <b>#10</b> His administration covered up the Epstien Files, claiming there was no list, then realease partial documents proving otherwise, but witholding 99% (1% released), in turn breaking the law demanding full release by congress.
-                    </a>
-                </li>
-                <li class="text-orange-300 hover:text-orange-200">
-				    <a href="https://www.vera.org/explainers/the-ice-killing-of-renee-nicole-good-is-a-watershed-moment-for-trump" target="_blank">
-                        <b>#11</b> His immigration tatics repeatedly violate due process, and led to murders of our own citizens. He then said I.C.E was "doing a great job" and called the victims terrorists. 
-                    </a>
-                </li>
-				<li class="text-slate-400 hover:text-slate-300">
-				    <a href="https://www.mediaite.com/online/here-are-6-times-trump-said-obama-would-attack-iran-over-a-decade-before-he-did-it-himself/" target="_blank">
-                        <b>#12</b> He said Obama would start a war with Iran, ran his campaigns on peace, then proceeded to start a war with Iran.
-                    </a>
-                </li>
-				<li class="text-orange-300 hover:text-orange-200">
-				    <a href="https://www.pbs.org/newshour/show/investigation-reveals-doj-withheld-epstein-files-mentioning-trump" target="_blank">
-                        <b>#13</b> Several Epstien documents were actively removed by the Trump DOJ in a second (third, fourth?) attempted cover up.
-                    </a>
-                </li>
-				<li class="text-slate-400 hover:text-slate-400">
-				    <a href="https://time.com/article/2026/03/31/gas-prices-us-iran-war/" target="_blank">
-                        <b>#14</b> He started war in Iran, causing oil, gas, and inflation to sky rocket. Even though he claimed he would "start no new wars" during his campaign.
-                    </a>
-                </li>
-                <li><a class="text-slate-500 hover:text-slate-200" href="https://www.thebulwark.com/p/101-more-reasons-trump-is-unfit-to" target="_blank">and many many more...</a></li>
-            </ul>
-            <br>
-        </div>
-        <div class="mx-auto max-w-screen-lg px-3 py-6">
-            <div class="border-t border-gray-600 pt-5">
-                <div class="text-sm text-slate-400 float-start">© Copyright <span id="year"></span></div>
-                <div class="text-sm text-slate-400 float-end">
-                    A website by
-                    <b>
-                        <a class="text-slate-300 hover:text-blue-300 font-bold" href="https://zachduda.com">Zach</a>
-                        <i class="fa-solid fa-heart text-rose-300 ml-1"></i>
-                    </b>
+
+    <body class="bg-slate-950 text-slate-200 antialiased">
+        <a
+            href="#reasons"
+            class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-orange-500 focus:px-4 focus:py-2 focus:font-bold focus:text-slate-950"
+            >Skip to the reasons</a
+        >
+
+        <main class="mx-auto w-full max-w-5xl px-5 pb-16 pt-20 sm:pt-28">
+            <!-- ------------------------------------------------ masthead -->
+            <header class="rise text-center">
+                <img src="/icon.svg" width="96" height="96" alt="An orange" class="mx-auto h-24 w-24 drop-shadow-lg sm:h-28 sm:w-28" />
+                <h1 class="mt-6 text-4xl font-bold tracking-tight text-orange-200 sm:text-5xl">That Orange Guy Countdown</h1>
+                <p class="mt-3 text-base text-slate-400">Because time doesn&rsquo;t stop for politics.</p>
+            </header>
+
+            <!-- ----------------------------------------------- countdown -->
+            <section
+                aria-label="Time remaining in the current term"
+                role="timer"
+                class="rise mx-auto mt-12 max-w-3xl rounded-3xl border border-white/10 bg-slate-900/50 p-5 shadow-2xl sm:p-8"
+            >
+                <div class="grid grid-cols-2 gap-3 text-center sm:grid-cols-4 sm:gap-4">
+                        <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-5 sm:px-3 sm:py-6">
+                            <div class="num text-4xl font-bold tracking-tight text-white sm:text-5xl"><span id="cd-days">&mdash;</span></div>
+                            <div class="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">Days</div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-5 sm:px-3 sm:py-6">
+                            <div class="num text-4xl font-bold tracking-tight text-white sm:text-5xl"><span id="cd-hours">&mdash;</span></div>
+                            <div class="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">Hours</div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-5 sm:px-3 sm:py-6">
+                            <div class="num text-4xl font-bold tracking-tight text-white sm:text-5xl"><span id="cd-mins">&mdash;</span></div>
+                            <div class="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">Minutes</div>
+                        </div>
+                        <div class="rounded-2xl border border-white/10 bg-white/5 px-2 py-5 sm:px-3 sm:py-6">
+                            <div class="num text-4xl font-bold tracking-tight text-white sm:text-5xl"><span id="cd-secs">&mdash;</span><span id="cd-frac" class="text-2xl text-orange-400/70 sm:text-3xl"></span></div>
+                            <div class="mt-2 text-xs font-medium uppercase tracking-widest text-slate-400">Seconds</div>
+                        </div>
                 </div>
+
+                <!-- ------------------------------------- progress bar -->
+                <div class="mt-8">
+                    <p class="text-center text-sm text-slate-300">
+                        <b id="term-pct" class="num font-bold text-orange-300">&mdash;</b> of the term served
+                    </p>
+                    <div
+                        id="term-track"
+                        role="progressbar"
+                        aria-label="Percentage of the term completed"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        class="mt-3 h-2.5 w-full overflow-hidden rounded-full bg-white/10 ring-1 ring-inset ring-white/5"
+                    >
+                        <div
+                            id="term-bar"
+                            style="width: 0%"
+                            class="h-full rounded-full bg-gradient-to-r from-amber-400 via-orange-500 to-orange-600 transition-all duration-700 ease-out"
+                        ></div>
+                    </div>
+                    <div class="mt-2 flex justify-between text-xs font-medium text-slate-500">
+                        <span>Jan 20, 2025</span>
+                        <span>Jan 20, 2028</span>
+                    </div>
+                </div>
+
+                <p id="term-done" class="mt-6 text-center text-lg font-bold text-orange-300">That&rsquo;s a wrap. The term is over.</p>
+            </section>
+
+            <!-- ------------------------------------------------- reasons -->
+            <section id="reasons" class="mt-20 scroll-mt-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h2 class="text-2xl font-bold text-slate-100 sm:text-3xl">Why the countdown?</h2>
+                    <p class="mt-3 text-slate-400">
+                        Time did allow me to list a few of the reasons I have an unfavorable view on the current incumbent.
+                    </p>
+                    <p class="mt-2 text-sm text-slate-500">Every card links out to a credible source.</p>
+                </div>
+
+                <ul class="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <li>
+                        <a
+                            href="https://www.britannica.com/event/January-6-U-S-Capitol-attack"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#1</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He directed a coup d’état of our US capitol on January 6th, 2021.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                Britannica
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://docs.house.gov/meetings/FD/FD00/20240515/117301/HHRG-118-FD00-20240515-SD003.pdf"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#2</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He lies. Constantly. 30,573 times to be exact in his first presidency alone.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                U.S. House of Representatives
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.npr.org/2025/02/07/g-s1-46893/trump-anti-trans-rights-executive-action-gender-ideology-confusion"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#3</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He attacks transgender people. All. The. Time.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                NPR
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.pbs.org/newshour/politics/trump-calls-nazi-hand-salute-comparisons-ridiculous"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#4</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">Nazi dog whistles, verbiage, and salutes are used around him and he&rsquo;s cool with it.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                PBS NewsHour
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://doggett.house.gov/media/blog-post/timeline-trumps-coronavirus-responses"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#5</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He disbanded the Pandemic Response team in 2018, left the World Health Organization in 2020, and led to a COVID-19 disaster.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                U.S. House of Representatives
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://apnews.com/article/kilmar-abrego-garcia-el-salvador-trump-deported-e537cfb69a9840046b5d3e512509e9a8"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#6</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He violated a court order then refused to admit or fix the deportation of an innocent man.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                Associated Press
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.npr.org/2025/04/10/nx-s1-5360062/why-some-are-accusing-trump-of-manipulating-stock-markets"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#7</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He manipulated the stock market, allowing billionaires to profit after hinting to his reversal on tariffs.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                NPR
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.snopes.com/news/2024/01/06/epstein-list-trump/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#8</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">Jeffrey Epstein (convicted child *** offender) can be spotted with him on multiple occasions and kept a list with his name in it.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                Snopes
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.pbs.org/newshour/nation/south-korean-workers-who-were-detained-in-a-hyundai-factory-raid-are-now-headed-home-heres-what-else-to-know/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#9</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">His policy allowed for wrongful deportation of skilled Korean workers at Hyundai with valid work visas, losing the US a full $7.6 billion investment and destroying relationships with South Korea.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                PBS NewsHour
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.cbc.ca/news/world/epstein-documents-release-delay-9.7058700"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#10</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">His administration covered up the Epstein Files, claiming there was no list, then released partial documents proving otherwise, but withholding 99% (1% released), in turn breaking the law demanding full release by congress.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                CBC News
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.vera.org/explainers/the-ice-killing-of-renee-nicole-good-is-a-watershed-moment-for-trump"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#11</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">His immigration tactics repeatedly violate due process, and led to murders of our own citizens. He then said I.C.E. was &ldquo;doing a great job&rdquo; and called the victims terrorists.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                Vera Institute of Justice
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.mediaite.com/online/here-are-6-times-trump-said-obama-would-attack-iran-over-a-decade-before-he-did-it-himself/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#12</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He said Obama would start a war with Iran, ran his campaigns on peace, then proceeded to start a war with Iran.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                Mediaite
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.pbs.org/newshour/show/investigation-reveals-doj-withheld-epstein-files-mentioning-trump"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#13</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">Several Epstein documents were actively removed by the Trump DOJ in a second (third, fourth?) attempted cover up.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                PBS NewsHour
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://time.com/article/2026/03/31/gas-prices-us-iran-war/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/5 p-5 text-left transition duration-200 hover:border-orange-400/40 hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <span class="inline-flex w-fit items-center rounded-full bg-orange-500/10 px-2.5 py-1 text-xs font-bold text-orange-300 ring-1 ring-inset ring-orange-400/25 transition group-hover:bg-orange-500/20 group-hover:text-orange-200">#14</span>
+                            <p class="mt-3 grow text-sm leading-relaxed text-slate-300 transition group-hover:text-slate-100">He started war in Iran, causing oil, gas, and inflation to sky rocket. Even though he claimed he would &ldquo;start no new wars&rdquo; during his campaign.</p>
+                            <span class="mt-4 flex items-center gap-1.5 text-xs font-medium text-slate-500 transition group-hover:text-orange-300">
+                                <i class="fa-solid fa-link" aria-hidden="true"></i>
+                                TIME
+                            </span>
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="https://www.thebulwark.com/p/101-more-reasons-trump-is-unfit-to"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="group flex h-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/15 p-5 py-8 text-center transition duration-200 hover:border-orange-400/40 hover:bg-white/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-orange-400 motion-safe:hover:-translate-y-1"
+                        >
+                            <i class="fa-solid fa-ellipsis text-xl text-slate-600 transition group-hover:text-orange-300" aria-hidden="true"></i>
+                            <span class="text-sm font-medium text-slate-400 transition group-hover:text-slate-200">and many, many more&hellip;</span>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </main>
+
+        <!-- -------------------------------------------------- footer -->
+        <footer class="mx-auto w-full max-w-5xl px-5 pb-10">
+            <div class="flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-sm text-slate-500 sm:flex-row">
+                <p>&copy; Copyright <span id="year">2025</span></p>
+                <p>
+                    A website by
+                    <a class="font-bold text-slate-300 transition hover:text-blue-300" href="https://zachduda.com">Zach</a>
+                    <i class="fa-solid fa-heart ml-1 text-rose-400" aria-hidden="true"></i>
+                </p>
             </div>
-        </div>
+        </footer>
     </body>
-    <script async="" defer="" type="text/javascript">
-		/* 
-		   A silly little app written by Zach Duda.
-		   License CC-BY-NC-4 - zachduda.com/license
-		   Contact Me @ zachduda.com/contact
-		*/
-		!function(){function n(n){return document.getElementById(n)}const t=n("year"),e=n("cd-days"),o=n("cd-hours"),a=n("cd-mins"),s=n("cd-secs"),r=n("cd-frac"),c=n("cd-prc"),i=n("thtml"),l=i?i.innerHTML:"",u=!!(e&&o&&a&&s&&r&&c),d=18636192e5,f=17373888e5,m=5;let h=100,w=null,p=null,y=null,M=null,x=null,g={},D=!1,b=null,v=0,F=0,L=0;const C=new Intl.NumberFormat;function E(){return null!=w&&null!=p?w+(performance.now()-p):Date.now()}function I(n,t,e){return Math.max(t,Math.min(e,n))}function T(){x&&(cancelAnimationFrame(x),x=null),M&&(clearInterval(M),M=null)}function H(){const n=E(),t=function(n){n<0&&(n=0);const t=1e3,e=6e4,o=60*e,a=24*o;return{days:Math.floor(n/a),hours:Math.floor(n%a/o),mins:Math.floor(n%o/e),secs:Math.floor(n%e/t),frac:Math.floor(n%t/100),remaining:n}}(d-n);!function(n){if(u){g.days!==n.days&&(e.textContent=C.format(n.days)+" days",g.days=n.days),g.hours!==n.hours&&(o.textContent=n.hours+"h",g.hours=n.hours),g.mins!==n.mins&&(a.textContent=n.mins+"m",g.mins=n.mins),g.secs!==n.secs&&(s.textContent=n.secs,g.secs=n.secs),h<1e3?g.frac!==n.frac&&(r.textContent="."+n.frac+"s",g.frac=n.frac):"s"!==g.frac&&(r.textContent="s",g.frac="s");const t=I(E()-f,0,d-f),i=parseFloat((t/(d-f)*100).toFixed(2));g.prc!==i&&(c.innerHTML="Orange Guy's term is <b class='text-orange-400'>"+i+"%</b> complete.",g.prc=i)}else{const t=h<1e3;let e=C.format(n.days)+" days "+n.hours+"h "+n.mins+"m "+n.secs;e+=t?"."+n.frac+"s":"s";const o=I(E()-f,0,d-f);e+="<br><p class='pt-3 text-sm text-slate-400'>Orange Man's term is <b class='text-orange-400'>"+parseFloat((o/(d-f)*100).toFixed(2))+"%</b> complete.</p>",g.html!==e&&(i.innerHTML=e,g.html=e)}}(t),t.remaining<=0&&T()}function j(){document.hidden||"function"!=typeof requestAnimationFrame?(T(),M=setInterval(H,h),H()):(T(),function n(){H(),x=requestAnimationFrame(n)}())}function A(){const n=Date.now();return fetch("https://api.zachduda.com/time.php",{cache:"no-store"}).then((n=>n.text())).then((t=>{const e=Date.now()-n,o=JSON.parse(t);return{adjusted:new Date(o.date).getTime()-Math.round(e/2),rtt:e}})).catch((()=>({adjusted:Date.now(),rtt:0})))}let O=null;async function q(n=!1){return O||(O=(async()=>{try{await async function(n){const t=[];for(let e=0;e<n;e++)t.push(A());const e=await Promise.all(t),o=e.map((n=>n.adjusted)).sort(((n,t)=>n-t)),a=e.map((n=>n.rtt)).sort(((n,t)=>n-t)),s=o[Math.floor(o.length/2)],r=a[Math.floor(a.length/2)];w=s,p=performance.now(),y=r,F=Date.now()}(m),n&&t&&(t.textContent=new Date(E()).getFullYear())}finally{O=null}})(),O)}function N(){const n=Date.now();n-v<200||(v=n,D=!0,b=performance.now(),h=1e3,j())}function z(){const n=Date.now();if(!(n-v<200)){if(v=n,D=!1,null!=b&&null!=p){const n=performance.now()-b;p+=n}b=null,h=100,i&&(i.innerHTML=l),q(!0).then((()=>{L=Date.now()+15e3,j()}))}}setInterval((()=>{const n=Date.now();n-F>=(n<L?5e3:6e4)&&q()}),1e3),document.addEventListener("visibilitychange",(()=>{document.hidden?N():z()})),window.addEventListener("blur",N),window.addEventListener("focus",z),window.addEventListener("pagehide",T),window.addEventListener("beforeunload",T),async function(){await q(!0),j()}()}();
-    </script>
 </html>
