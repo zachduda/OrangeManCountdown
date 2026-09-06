@@ -1,16 +1,11 @@
 /*
 	That Orange Guy Countdown — service worker
 	License: CC-BY-NC-4 - zachduda.com/license
-
-	Bump CACHE_VERSION to force every client onto a fresh set of caches.
 */
 var CACHE_VERSION = "v1";
 var SHELL = "orange-shell-" + CACHE_VERSION;
 var RUNTIME = "orange-runtime-" + CACHE_VERSION;
 var KEEP = [SHELL, RUNTIME];
-
-// Without these the page cannot render at all, so a failure here should fail
-// the install and leave the previous worker in place.
 var CRITICAL = ["/", "/index.html", "/Content/script.js", "/icon.svg"];
 
 // Nice to have offline, but not worth failing an install over.
